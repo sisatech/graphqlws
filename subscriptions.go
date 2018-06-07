@@ -1,6 +1,7 @@
 package graphqlws
 
 import (
+	"context"
 	"errors"
 
 	"github.com/graphql-go/graphql"
@@ -39,6 +40,7 @@ type Subscription struct {
 	Fields        []string
 	Connection    Connection
 	SendData      SubscriptionSendDataFunc
+	Context       context.Context
 }
 
 // MatchesField returns true if the subscription is for data that

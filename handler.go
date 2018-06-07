@@ -82,6 +82,7 @@ func NewHandler(config HandlerConfig) http.Handler {
 							SendData: func(data *DataMessagePayload) {
 								conn.SendData(opID, data)
 							},
+							Context: r.Context(),
 						})
 					},
 					StopOperation: func(conn Connection, opID string) {
