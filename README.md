@@ -3,10 +3,10 @@
 Implementation of the [GraphQL over WebSocket protocol] in Go.
 Brought to you by [Functional Foundry](https://functionalfoundry.com).
 
-[API Documentation](https://godoc.org/github.com/functionalfoundry/graphqlws)
+[API Documentation](https://godoc.org/github.com/sisatech/graphqlws)
 
 [![Build Status](https://travis-ci.org/functionalfoundry/graphqlws.svg?branch=master)](https://travis-ci.org/functionalfoundry/graphqlws)
-[![Go Report](https://goreportcard.com/badge/github.com/functionalfoundry/graphqlws)](https://goreportcard.com/report/github.com/functionalfoundry/graphqlws)
+[![Go Report](https://goreportcard.com/badge/github.com/sisatech/graphqlws)](https://goreportcard.com/report/github.com/sisatech/graphqlws)
 
 ## Getting started
 
@@ -22,7 +22,7 @@ Brought to you by [Functional Foundry](https://functionalfoundry.com).
    ```sh
    mkdir -p "$GOPATH/src/github.com/functionalfoundry"
    cd "$GOPATH/src/github.com/functionalfoundry"
-   git clone https://github.com/functionalfoundry/graphqlws
+   git clone https://github.com/sisatech/graphqlws
    ```
 4. Run the tests:
    ```sh
@@ -44,7 +44,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/functionalfoundry/graphqlws"
+	"github.com/sisatech/graphqlws"
 	"github.com/graphql-go/graphql"
 )
 

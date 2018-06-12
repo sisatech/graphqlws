@@ -163,6 +163,30 @@ func (m *subscriptionManager) AddSubscription(
 
 	m.subscriptions[conn][subscription.ID] = subscription
 
+	// force first result
+	// Prepare an execution context for running the query
+	ctx := subscription.Context
+
+	// Re-execute the subscription query
+	params := graphql.Params{
+		Schema:         *m.schema, // The GraphQL schema
+		RequestString:  subscription.Query,
+		VariableValues: subscription.Variables,
+		OperationName:  subscription.OperationName,
+		Context:        ctx,
+	}
+	result := graphql.Do(params)
+
+	// Send query results back to the subscriber at any point
+	data := DataMessagePayload{
+		// Data can be anything (interface{})
+		Data: result.Data,
+		// Errors is optional ([]error)
+		Errors: ErrorsFromGraphQLErrors(result.Errors),
+	}
+	subscription.SendData(&data)
+	//
+
 	return nil
 }
 
