@@ -27,9 +27,6 @@ func NewHandler(config HandlerConfig) http.Handler {
 	logger := NewLogger("handler")
 	subscriptionManager := config.SubscriptionManager
 
-	// Create a map (used like a set) to manage client connections
-	var connections = make(map[Connection]bool)
-
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			// Establish a WebSocket connection
@@ -49,7 +46,7 @@ func NewHandler(config HandlerConfig) http.Handler {
 			}
 
 			// Establish a GraphQL WebSocket connection
-			conn := NewConnection(ws, ConnectionConfig{
+			NewConnection(ws, ConnectionConfig{
 				Authenticate: config.Authenticate,
 				EventHandlers: ConnectionEventHandlers{
 					Close: func(conn Connection) {
@@ -59,8 +56,6 @@ func NewHandler(config HandlerConfig) http.Handler {
 						}).Debug("Closing connection")
 
 						subscriptionManager.RemoveSubscriptions(conn)
-
-						delete(connections, conn)
 					},
 					StartOperation: func(
 						conn Connection,
@@ -92,7 +87,6 @@ func NewHandler(config HandlerConfig) http.Handler {
 					},
 				},
 			})
-			connections[conn] = true
 		},
 	)
 }
