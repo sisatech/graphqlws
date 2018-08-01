@@ -3,6 +3,7 @@ package graphqlws
 import (
 	"context"
 	"errors"
+	"sync"
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/gqlerrors"
@@ -91,8 +92,9 @@ type SubscriptionManager interface {
 
 type subscriptionManager struct {
 	subscriptions Subscriptions
-	schema        *graphql.Schema
-	logger        *log.Entry
+	sync.RWMutex
+	schema *graphql.Schema
+	logger *log.Entry
 }
 
 // NewSubscriptionManager creates a new subscription manager.
@@ -148,6 +150,7 @@ func (m *subscriptionManager) AddSubscription(
 
 	// Allocate the connection's map of subscription IDs to
 	// subscriptions on demand
+	m.Lock()
 	if m.subscriptions[conn] == nil {
 		m.subscriptions[conn] = make(ConnectionSubscriptions)
 	}
@@ -162,6 +165,7 @@ func (m *subscriptionManager) AddSubscription(
 	}
 
 	m.subscriptions[conn][subscription.ID] = subscription
+	m.Unlock()
 
 	// force first result
 	// Prepare an execution context for running the query
@@ -214,6 +218,7 @@ func (m *subscriptionManager) RemoveSubscriptions(conn Connection) {
 	}).Info("Remove subscriptions")
 
 	// Only remove subscriptions if we know the connection
+	m.Lock()
 	if m.subscriptions[conn] != nil {
 		// Remove subscriptions one by one
 		for opID := range m.subscriptions[conn] {
@@ -223,6 +228,7 @@ func (m *subscriptionManager) RemoveSubscriptions(conn Connection) {
 		// Remove the connection's subscription map altogether
 		delete(m.subscriptions, conn)
 	}
+	m.Unlock()
 }
 
 func validateSubscription(s *Subscription) []error {
