@@ -161,6 +161,7 @@ func (m *subscriptionManager) AddSubscription(
 			"conn":         conn.ID(),
 			"subscription": subscription.ID,
 		}).Warn("Cannot register subscription twice")
+		m.Unlock()
 		return []error{errors.New("Cannot register subscription twice")}
 	}
 
