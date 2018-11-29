@@ -107,7 +107,13 @@ func NewSubscriptionManager(schema *graphql.Schema) SubscriptionManager {
 }
 
 func (m *subscriptionManager) Subscriptions() Subscriptions {
-	return m.subscriptions
+	m.RLock()
+	defer m.RUnlock()
+	s := make(Subscriptions)
+	for k, v := range m.subscriptions {
+		s[k] = v
+	}
+	return s
 }
 
 func (m *subscriptionManager) AddSubscription(
